@@ -3,8 +3,9 @@ sap.ui.define([
     "sap/ui/model/json/JSONModel",
     "../model/formatter",
     "sap/ui/model/Filter",
-    "sap/ui/model/FilterOperator"
-], function (BaseController, JSONModel, formatter, Filter, FilterOperator) {
+    "sap/ui/model/FilterOperator",
+    "sap/m/MessageBox"
+], function (BaseController, JSONModel, formatter, Filter, FilterOperator,MessageBox) {
     "use strict";
 
     return BaseController.extend("bpanderson01.controller.Worklist", {
@@ -71,9 +72,15 @@ sap.ui.define([
          */
         onPress : function (oEvent) {
             // The source is the list item that got pressed
+
             this._showObject(oEvent.getSource());
         },
-
+        onCreatePress : function () {
+            // The source is the list item that got pressed
+            var that = this;
+            MessageBox.error(that.getText("msgCreate"), {
+                title: that.getText("txtMsgCreate")})
+        },
         /**
          * Event handler for navigating back.
          * Navigate back in the browser history

@@ -47,7 +47,16 @@ sap.ui.define([
         getResourceBundle : function () {
             return this.getOwnerComponent().getModel("i18n").getResourceBundle();
         },
+        getText: function (sTextId, aArgs) { 
+            var oView = this.getView(); 
+            var oModel = oView.getModel("i18n");
 
+            if (!oModel) { 
+                oModel = sap.ui.model.resource.ResourceModel({ bundleName: "bpmaint.bpmaint.i18n.i18n" }); 
+                oView.setModel(oModel, "i18n"); 
+            }
+            return oModel.getResourceBundle().getText(sTextId, aArgs); 
+        },
         /**
          * Event handler when the share by E-Mail button has been clicked
          * @public

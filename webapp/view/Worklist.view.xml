@@ -39,6 +39,7 @@
                             text="{worklistView>/worklistTableTitle}"
                             level="H3"/>
                         <ToolbarSpacer />
+                        <Button id="buttonCreate" text="{i18n>btnCreate}" type="Default" press="onCreatePress" />
                         <SearchField
                             id="searchField"
                             tooltip="{i18n>worklistSearchTooltip}"
@@ -53,12 +54,21 @@
                 </headerToolbar>
 
                 <columns>
-                    <Column id="nameColumn">
-                        <Text text="{i18n>tableNameColumnTitle}" id="nameColumnTitle"/>
+                    <Column id="idParceiro">
+                        <Text text="{i18n>tableIdParceiro}" id="txtIdParceiro"/>
                     </Column>
-                    <Column id="unitNumberColumn" hAlign="End">
+                    <Column id="tipoParceiro">
+                        <Text text="{i18n>tableTipoParceiro}" id="txtTipoParceiro"/>
+                    </Column>
+                    <Column id="cityParceiro">
+                        <Text text="{i18n>tableCityParceiro}" id="txtCityParceiro"/>
+                    </Column>
+                    <Column id="countryParceiro">
+                        <Text text="{i18n>tableCountryParceiro}" id="txtCountryParceiro"/>
+                    </Column>
+                    <!--Column id="unitNumberColumn" hAlign="End">
                         <Text text="{i18n>tableUnitNumberColumnTitle}" id="unitNumberColumnTitle"/>
-                    </Column>
+                    </Column-->
                 </columns>
 
                 <items>
@@ -67,8 +77,11 @@
                         press=".onPress">
                         <cells>
                             <ObjectIdentifier
-                                title="{PartnerId}"/>
-                            <ObjectNumber />
+                                title="{PartnerId}" text="{PartnerName2} {PartnerName1}"/>
+                            <Text text="{path: 'PartnerType', formatter: '.formatter.formatPartnerType'}" />   
+                            <Text text="{City}"/>   
+                             <Text text="{Country}"/>   
+                            <!--ObjectNumber /-->
                         </cells>
                     </ColumnListItem>
                 </items>
