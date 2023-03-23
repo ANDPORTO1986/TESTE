@@ -69,8 +69,7 @@ sap.ui.define([
             //let oJson = this.getView().getBindingContext().getObject(); 
             let oModel = this.getOwnerComponent().getModel(); 
             let oJson = {
-                PartnerId: this.getView().getBindingContext().getObject().PartnerId,
-                PartnerType: this.byId("txtPartnerType").getValue(), 
+                PartnerId: this.getView().getBindingContext().getObject().PartnerId, 
                 PartnerName1: this.byId("txtPartnerName1").getValue(), 
                 PartnerName2: this.byId("txtPartnerName2").getValue(), 
                 SearchTerm1: this.byId("txtSearchTerm1").getValue(), 
@@ -135,6 +134,16 @@ sap.ui.define([
                     }
                 }
             });
+        },
+        handleChange: function (oEvent) {
+            var oText = this.byId("T1"),
+                oTP = oEvent.getSource(),
+                sValue = oEvent.getParameter("value"),
+                bValid = oEvent.getParameter("valid");
+            this._iEvent++;
+            oText.setText("'change' Event #" + this._iEvent + " from TimePicker '" + oTP.getId() + "': " + sValue + (bValid ? ' (valid)' : ' (invalid)'));
+            this._changeEditStatus();
+            
         },
 
         _onBindingChange : function () {

@@ -4,10 +4,11 @@ sap.ui.define([
     "../model/formatter",
     "sap/ui/model/Filter",
     "sap/ui/model/FilterOperator",
-    "sap/m/MessageBox"
-], function (BaseController, JSONModel, formatter, Filter, FilterOperator,MessageBox) {
+    "sap/m/MessageBox",
+    "sap/ui/core/mvc/Controller",
+    "sap/m/MessageToast"
+], function (BaseController, JSONModel, formatter, Filter, FilterOperator, MessageBox, controller , MessageToast) {
     "use strict";
-
     return BaseController.extend("bpanderson01.controller.Worklist", {
 
         formatter: formatter,
@@ -31,7 +32,22 @@ sap.ui.define([
                 worklistTableTitle : this.getResourceBundle().getText("worklistTableTitle"),
                 shareSendEmailSubject: this.getResourceBundle().getText("shareSendEmailWorklistSubject"),
                 shareSendEmailMessage: this.getResourceBundle().getText("shareSendEmailWorklistMessage", [location.href]),
-                tableNoDataText : this.getResourceBundle().getText("tableNoDataText")
+                tableNoDataText : this.getResourceBundle().getText("tableNoDataText"),
+                New: {
+                    PartnerType: '',
+                    PartnerName1: '',
+                    PartnerName2: '',
+                    SearchTerm1: '',
+                    SearchTerm2: '',
+                    Street: '',
+                    HouseNumber: '',
+                    District: '',
+                    City: '',
+                    Region: '',
+                    ZipCode: '',
+                    Country: ''
+                },
+                busy: false
             });
             this.setModel(oViewModel, "worklistView");
 
@@ -76,11 +92,36 @@ sap.ui.define([
             this._showObject(oEvent.getSource());
         },
         onCreatePress : function () {
-            // The source is the list item that got pressed
-            var that = this;
-            MessageBox.error(that.getText("msgCreate"), {
-                title: that.getText("txtMsgCreate")})
+            // The source is the list item that got pressed 
+            this._getDialog().open();
         },
+        onSavePress: function () {
+            var that = this;
+            let oViewModel = this.getModel("worklistView");
+            let oJson = oViewModel.getProperty("/New");
+            let oModel = this.getOwnerComponent().getModel();
+            if (oJson.PartnerType == '') {
+                MessageToast.show("Preencher o tipo de parceiro.");
+            } else {
+            oViewModel.setProperty("/busy", true);
+            oModel.create("/PARCEIROSet", oJson, {
+                success: (oData) => {
+                    MessageBox.success(that.getText("msgBPCreated", [oData.PartnerId]), {
+                        title: that.getText("txtBPUpdated"),
+                        onClose: function () {
+                            that._getDialog().close();
+                            oViewModel.setProperty("/busy", false);
+                        }
+                    });
+                },
+                error: (e) => {
+                    MessageBox.error(that.getText("msgBPCrtError"), {
+                        title: that.getText("txtBPCrtError")
+                    });
+                }
+            });
+        }
+    },
         /**
          * Event handler for navigating back.
          * Navigate back in the browser history
@@ -135,7 +176,9 @@ sap.ui.define([
                 objectId: oItem.getBindingContext().getPath().substring("/PARCEIROSet".length)
             });
         },
-
+        onClose: function () {
+            this._getDialog().close();
+        },
         /**
          * Internal helper method to apply both filter and search state together on the list binding
          * @param {sap.ui.model.Filter[]} aTableSearchState An array of filters for the search
@@ -149,6 +192,15 @@ sap.ui.define([
             if (aTableSearchState.length !== 0) {
                 oViewModel.setProperty("/tableNoDataText", this.getResourceBundle().getText("worklistNoDataWithSearchText"));
             }
+        },
+
+        _getDialog: function () {
+            if (!this._oDialog) {
+                this._oDialog = sap.ui.xmlfragment("bpanderson01.view.fragment.New", this);
+                this.getView().addDependent(this._oDialog);
+            }
+
+            return this._oDialog;
         }
 
     });
